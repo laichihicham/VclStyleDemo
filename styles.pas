@@ -219,7 +219,7 @@ begin
   stylesList.Clear;
   for styleName in TStyleManager.StyleNames do
     stylesList.Items.Add(styleName);
-  stylesList.ItemIndex := stylesList.Count - 1;
+  // stylesList.ItemIndex := stylesList.Count - 1;
 end;
 
 end.
