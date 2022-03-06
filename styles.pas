@@ -28,7 +28,6 @@ type
     deleteStyle: TButton;
     procedure stylesListDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure deleteStyleClick(Sender: TObject);
     procedure addNewClick(Sender: TObject);
   private
@@ -99,8 +98,7 @@ var
 begin
   SettingINI := TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
   try
-    for i := 1 to stylesList.Count - 1 do
-      SettingINI.DeleteKey('Styles', i.ToString);
+    SettingINI.EraseSection('Styles');
     for i := 0 to stylesList.Count - 1 do
       SettingINI.WriteString('Styles', i.ToString,
         StringReplace(stylesList.Items[i], ' ', '', [rfReplaceAll]));
@@ -134,6 +132,7 @@ begin
     else
       ShowMessage('The file is not a valid VCL Style !');
   end;
+  WriteStylesINI;
 end;
 
 procedure TfrmVclStyles.deleteStyleClick(Sender: TObject);
@@ -161,9 +160,9 @@ begin
       exit;
     end;
 
-    for i := 0 to stylesList.Count - 1 do
-      SettingINI.DeleteKey('Styles', i.ToString);
+    SettingINI.EraseSection('Styles');
     stylesList.Items.Delete(stylesList.ItemIndex);
+
     for i := 0 to stylesList.Count - 1 do
       SettingINI.WriteString('Styles', i.ToString,
         StringReplace(stylesList.Items[i], ' ', '', [rfReplaceAll]));
@@ -180,11 +179,6 @@ begin
   ShellExecute(Handle, nil, PChar(Application.ExeName), nil, nil,
     SW_SHOWNORMAL);
   Application.Terminate;
-end;
-
-procedure TfrmVclStyles.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  WriteStylesINI;
 end;
 
 procedure TfrmVclStyles.FormCreate(Sender: TObject);
@@ -219,7 +213,6 @@ begin
   stylesList.Clear;
   for styleName in TStyleManager.StyleNames do
     stylesList.Items.Add(styleName);
-  // stylesList.ItemIndex := stylesList.Count - 1;
 end;
 
 end.
