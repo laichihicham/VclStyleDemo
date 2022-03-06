@@ -12,7 +12,6 @@ object frmVclStyles: TfrmVclStyles
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poDesktopCenter
-  OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
