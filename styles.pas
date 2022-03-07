@@ -12,9 +12,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.UITypes,
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Themes,
-  Vcl.styles, Inifiles, ShellAPI;
+  Vcl.styles, Inifiles, ShellAPI, Vcl.ExtCtrls;
 
 type
   TfrmVclStyles = class(TForm)
@@ -26,6 +27,12 @@ type
     CheckBox2: TCheckBox;
     browStyles: TOpenDialog;
     deleteStyle: TButton;
+    RadioGroup1: TRadioGroup;
+    RadioButton1: TRadioButton;
+    GroupBox1: TGroupBox;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
     procedure stylesListDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure deleteStyleClick(Sender: TObject);
@@ -159,6 +166,10 @@ begin
       ShowMessage('You can''t delete the system style');
       exit;
     end;
+
+    if MessageDlg('Do you delete this style?', TMsgDlgType.mtConfirmation,
+      [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0) = mrNo then
+      exit;
 
     SettingINI.EraseSection('Styles');
     stylesList.Items.Delete(stylesList.ItemIndex);

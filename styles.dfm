@@ -3,8 +3,8 @@ object frmVclStyles: TfrmVclStyles
   Top = 0
   BorderStyle = bsDialog
   Caption = 'VCL Styles'
-  ClientHeight = 308
-  ClientWidth = 434
+  ClientHeight = 420
+  ClientWidth = 459
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -26,7 +26,7 @@ object frmVclStyles: TfrmVclStyles
     Left = 16
     Top = 39
     Width = 217
-    Height = 250
+    Height = 370
     ItemHeight = 15
     TabOrder = 0
     OnDblClick = stylesListDblClick
@@ -74,9 +74,60 @@ object frmVclStyles: TfrmVclStyles
     TabOrder = 5
     OnClick = deleteStyleClick
   end
+  object RadioGroup1: TRadioGroup
+    Left = 256
+    Top = 317
+    Width = 185
+    Height = 92
+    Caption = 'RadioGroup1'
+    Items.Strings = (
+      'Test1'
+      'Test2')
+    TabOrder = 6
+  end
+  object RadioButton1: TRadioButton
+    Left = 280
+    Top = 152
+    Width = 113
+    Height = 17
+    Caption = 'RadioButton1'
+    TabOrder = 7
+  end
+  object GroupBox1: TGroupBox
+    Left = 256
+    Top = 192
+    Width = 185
+    Height = 105
+    Caption = 'GroupBox1'
+    TabOrder = 8
+    object Edit1: TEdit
+      Left = 24
+      Top = 32
+      Width = 121
+      Height = 23
+      TabOrder = 0
+      Text = 'Edit1'
+    end
+    object Edit2: TEdit
+      Left = 24
+      Top = 64
+      Width = 121
+      Height = 23
+      TabOrder = 1
+      Text = 'Edit2'
+    end
+    object Edit3: TEdit
+      Left = 184
+      Top = 96
+      Width = 121
+      Height = 23
+      TabOrder = 2
+      Text = 'Edit3'
+    end
+  end
   object browStyles: TOpenDialog
     Filter = 'style file|*.vsf'
-    Left = 256
-    Top = 144
+    Left = 408
+    Top = 8
   end
 end
