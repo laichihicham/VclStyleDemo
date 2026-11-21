@@ -220,7 +220,7 @@ begin
       WS_EX_TOOLWINDOW or WS_EX_TOPMOST,
       'STATIC',
       '',
-      WS_POPUP or WS_VISIBLE,
+      WS_POPUP, // NOT WS_VISIBLE: prevents blank flash before BitBlt
       R.Left, R.Top, R.Right - R.Left, R.Bottom - R.Top,
       0, 0, HInstance, nil
     );
@@ -230,14 +230,17 @@ begin
       CoverDc := GetDC(CoverHwnd);
       if CoverDc <> 0 then
       begin
-        SrcDc := GetDC(MainHwnd);
+        SrcDc := GetDC(0); // Screen/Desktop DC for 100% pixel fidelity
         if SrcDc <> 0 then
         begin
-          BitBlt(CoverDc, 0, 0, R.Right - R.Left, R.Bottom - R.Top, SrcDc, 0, 0, SRCCOPY);
-          ReleaseDC(MainHwnd, SrcDc);
+          BitBlt(CoverDc, 0, 0, R.Right - R.Left, R.Bottom - R.Top, SrcDc, R.Left, R.Top, SRCCOPY);
+          ReleaseDC(0, SrcDc);
         end;
         ReleaseDC(CoverHwnd, CoverDc);
       end;
+      // Show cover ONLY after its content matches the screen 100%
+      ShowWindow(CoverHwnd, SW_SHOWNOACTIVATE);
+      UpdateWindow(CoverHwnd);
     end;
   end;
 
