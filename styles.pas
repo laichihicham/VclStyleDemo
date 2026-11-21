@@ -188,9 +188,11 @@ end;
 
 procedure TfrmVclStyles.ApplyStyle(const AStyleName: string);
 var
-  MainHwnd: HWND;
+  MainHwnd, CoverHwnd: HWND;
   WasEnabled: Boolean;
   Ini: TMemIniFile;
+  R: TRect;
+  CoverDc, SrcDc: HDC;
 begin
   if AStyleName = '' then Exit;
 
@@ -206,13 +208,39 @@ begin
   except
   end;
 
-  // 2. Smooth, flicker-free style transition
+  // 2. 100% Flicker-Free Style Transition using Native Win32 Cover Window (Freeze Frame)
   MainHwnd := 0;
-  if Application.MainForm <> nil then
+  CoverHwnd := 0;
+  if (Application.MainForm <> nil) and Application.MainForm.Visible then
     MainHwnd := Application.MainForm.Handle;
 
-  if MainHwnd <> 0 then
-    LockWindowUpdate(MainHwnd);
+  if (MainHwnd <> 0) and GetWindowRect(MainHwnd, R) then
+  begin
+    CoverHwnd := CreateWindowEx(
+      WS_EX_TOOLWINDOW or WS_EX_TOPMOST,
+      'STATIC',
+      '',
+      WS_POPUP or WS_VISIBLE,
+      R.Left, R.Top, R.Right - R.Left, R.Bottom - R.Top,
+      0, 0, HInstance, nil
+    );
+
+    if CoverHwnd <> 0 then
+    begin
+      CoverDc := GetDC(CoverHwnd);
+      if CoverDc <> 0 then
+      begin
+        SrcDc := GetDC(MainHwnd);
+        if SrcDc <> 0 then
+        begin
+          BitBlt(CoverDc, 0, 0, R.Right - R.Left, R.Bottom - R.Top, SrcDc, 0, 0, SRCCOPY);
+          ReleaseDC(MainHwnd, SrcDc);
+        end;
+        ReleaseDC(CoverHwnd, CoverDc);
+      end;
+    end;
+  end;
+
   try
     // Prevent "Cannot focus a disabled or invisible window" if called during modal dialogs
     WasEnabled := False;
@@ -231,12 +259,12 @@ begin
 
     if (MainHwnd <> 0) and (not WasEnabled) then
       EnableWindow(MainHwnd, False);
+
+    if Application.MainForm <> nil then
+      Application.MainForm.Update;
   finally
-    if MainHwnd <> 0 then
-    begin
-      LockWindowUpdate(0);
-      RedrawWindow(MainHwnd, nil, 0, RDW_INVALIDATE or RDW_ALLCHILDREN or RDW_UPDATENOW);
-    end;
+    if CoverHwnd <> 0 then
+      DestroyWindow(CoverHwnd);
   end;
 
   RefreshStylesList;
